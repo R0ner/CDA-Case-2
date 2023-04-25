@@ -22,7 +22,6 @@ def get_data():
             path = root.replace('\\', '/')
             path = path.replace("D1_3/", "")
             path_comp = path.split("/")
-            print(path_comp)
             # Assign experiment variables
             cohord, person, round_, phase = path_comp[2:]
             data['participant'].append((cohord, person))
