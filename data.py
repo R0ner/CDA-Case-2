@@ -46,3 +46,9 @@ def get_data():
     # Convert to pandas dataframe
     df = pd.DataFrame.from_dict(data)
     return df
+
+if __name__ == "__main__":
+    if not os.path.exists('data'):
+        os.mkdir('data')
+    df = get_data()
+    df.to_pickle("data/data_df.pkl")
