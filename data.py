@@ -1,6 +1,8 @@
 import os
 
+import numpy as np
 import pandas as pd
+from scipy import signal
 
 
 def get_data():
@@ -43,6 +45,28 @@ def get_data():
                 data[m].append(m_df)
     # Convert to pandas dataframe
     df = pd.DataFrame.from_dict(data)
+
+    freqs = {"BVP": 64, "TEMP": 4, "EDA": 4, "HR": 1}
+
+    lengths = []
+    m_df_sync = {m: list() for m in measurements}
+    for row in range(df.shape[0]):
+        time = np.arange(0, 300, 1 / 64)
+        for m in measurements:
+            m_df = df.loc[row, m]
+            series = m_df[m].to_numpy()
+            if freqs[m] != 64:
+                target_len = int(64 / freqs[m] * len(series))
+                series = signal.resample(series, target_len)
+
+            series = series[:time.size]  # Cut off tailing data
+            
+            if len(series) != time.size:
+                diff = time.size - len(series)
+                series = np.concatenate((series, np.repeat(series.mean, diff)))
+            m_df_sync[m].append(series)
+    for m, synched in m_df_sync.items():
+        df[f'{m}_synched'] = synched
     return df
 
 if __name__ == "__main__":
