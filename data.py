@@ -63,7 +63,7 @@ def get_data():
             
             if len(series) != time.size:
                 diff = time.size - len(series)
-                series = np.concatenate((series, np.repeat(series.mean, diff)))
+                series = np.concatenate((series, np.repeat(series.mean(), diff)))
             m_df_sync[m].append(series)
     for m, synched in m_df_sync.items():
         df[f'{m}_synched'] = synched
